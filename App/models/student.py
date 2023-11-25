@@ -1,10 +1,10 @@
 from App.database import db
-from App.models import User, student_competition, competition
+from App.models import User#, competition_student, competition
 
 class Student(User):
     __tablename__ = 'student'
 
-    competitions = db.relationship('Competition', secondary="student_competition", overlaps='participants', lazy=True)
+    competitions = db.relationship('Competition', secondary="competition_student", overlaps='participants', lazy=True)
     ranking = db.relationship('Ranking', uselist=False, backref='student', lazy=True)
     notifications = db.relationship('Notification', backref='student', lazy=True)
 

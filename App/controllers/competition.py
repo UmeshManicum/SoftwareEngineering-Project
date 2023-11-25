@@ -1,44 +1,46 @@
-from App.models import Competition, User, student_competition
+from App.models import Competition,Student, competition_student
 from App.database import db
 
 def create_competition(name, location):
-    newcomp = Competition(name = name, location = location)
-
-
+    comp = get_comp_by_name(name)
+    if comp:
+        print(f'{name} already exists!')
+        return None
+    
+    newComp = Competition(name=name, location=location)
     try:
-        db.session.add(newcomp)
+        db.session.add(newComp)
         db.session.commit()
+        print(f'New Competition: {name} created!')
+        return newComp
     except Exception as e:
         db.session.rollback()
-        return False
-    return True
+        return None
+
+def get_competition_by_name(name):
+    return Competition.query.filter_by(name=name).first()
+
+def get_competition(id):
+    return Competition.query.get(id)
 
 def get_all_competitions():
     return Competition.query.all()
 
 def get_all_competitions_json():
-    competition = Competition.query.all()
+    competitions = Competition.query.all()
 
-    if not competition:
+    if not competitions:
         return []
     else:
-        return [comp.toDict() for comp in competition]
+        return [comp.to_json() for comp in competitions]
 
-
-def get_competition_by_id(id):
-    competition = Competition.query.get(id)
-    return competition
-
-
+#still needs adjusting (add_results function)
 def add_results(user_id, comp_id, rank):
     Comp = Competition.query.get(comp_id)
     user = User.query.get(user_id)
-        
-        
-            
+          
     if user and Comp:
         compParticipant = UserCompetition(user_id = user.id, comp_id = Comp.id, rank=rank)
-
 
         try:
             db.session.add(compParticipant)
@@ -51,13 +53,9 @@ def add_results(user_id, comp_id, rank):
             return False
         return False
 
+def get_competition_students(comp_id):
+    comp = get_competition(comp_id)
 
-
-def get_competition_users(comp_id):
-    Comp = get_competition_by_id(comp_id)
-    
-
-    if Comp:
-        compUsers = Comp.participants
-        Participants = [User.query.get(part.user_id) for part in compUsers]
-        print(Participants)
+    if comp:
+        return [Student.query.get(student_id) for student in comp.participants]
+    return []

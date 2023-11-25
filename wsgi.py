@@ -6,8 +6,7 @@ from flask.cli import with_appcontext, AppGroup
 
 from App.database import db, get_migrate
 from App.main import create_app
-from App.controllers import (add_results, get_user_rankings, get_competition_users, findCompUser, get_user_competitions, add_user_to_comp, create_competition, get_all_competitions, get_all_competitions_json, create_user, get_all_users_json, get_all_users )
-
+from App.controllers import *
 
 
 # This commands file allow you to create convenient CLI commands for testing controllers
@@ -20,7 +19,7 @@ migrate = get_migrate(app)
 def initialize():
     db.drop_all()
     db.create_all()
-    create_user('bob', 'bobpass')
+    #create_student('bob', 'bobpass')
     print('database intialized')
 
 '''
@@ -31,27 +30,32 @@ User Commands
 
 # create a group, it would be the first argument of the comand
 # eg : flask user <command>
-user_cli = AppGroup('user', help='User object commands') 
+student_cli = AppGroup('student', help='Student object commands') 
 
 # Then define the command and any parameters and annotate it with the group (@)
-@user_cli.command("create", help="Creates a user")
+@student_cli.command("create", help="Creates a student")
+@click.argument("username", default="bob")
+@click.argument("password", default="bobpass")
+def create_student_command(username, password):
+    student = create_student(username, password)
+
+@student_cli.command("update", help="Updates a student's username")
+@click.argument("id", default="1")
 @click.argument("username", default="rob")
-@click.argument("password", default="robpass")
-def create_user_command(username, password):
-    create_user(username, password)
-    print(f'{username} created!')
+def update_student_command(id, username):
+    student = update_student(id, username)
 
 # this command will be : flask user create bob bobpass
 
-@user_cli.command("list", help="Lists users in the database")
+@student_cli.command("list", help="Lists students in the database")
 @click.argument("format", default="string")
-def list_user_command(format):
+def list_students_command(format):
     if format == 'string':
-        print(get_all_users())
+        print(get_all_students())
     else:
-        print(get_all_users_json())
+        print(get_all_students_json())
 
-app.cli.add_command(user_cli) # add the group to the cli
+app.cli.add_command(student_cli) # add the group to the cli
 
 '''
 Test Commands
