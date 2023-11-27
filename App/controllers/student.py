@@ -51,19 +51,17 @@ def update_student(id, username):
     return None
 
 #still needs adjusting (everything below)
-    
+
 def get_ranked_users():
-    return User.query.order_by(User.rank.asc()).all()
+    return Student.query.order_by(Student.ranking.asc()).all()
 
+"""def register_student(student_id, comp_id):
 
-
-def add_user_to_comp(user_id, comp_id, rank):
-
-    user = User.query.get(user_id)
+    student = get_student(student_id)
     comp = Competition.query.get(comp_id)
 
-    user_comp = UserCompetition.query.filter_by(user_id=user.id, comp_id=comp.id).first()
-    if user_comp:
+    student_comp = CompetitionStudent.query.filter_by(student_id=student.id, comp_id=comp.id).first()
+    if student_comp:
         return False
         
     if user and comp:
@@ -80,9 +78,22 @@ def add_user_to_comp(user_id, comp_id, rank):
         print("success")
         
 
-    return 'Error adding user to competition'
+    return 'Error adding user to competition'"""
 
+def register_student(username, competition_name):
+  student = get_student_by_username(username)
+  if student:
+    competition = Competition.query.filter_by(name=competition_name).first()
+    if competition:
+      return student.participate_in_competition(competition)
+    else:
+      print(f'{competition_name} was not found')
+      return None
+  else:
+    print(f'{username} was not found')
+    return None
 
+"""
 def get_user_competitions(user_id):
     user = User.query.get(user_id)
     
@@ -97,7 +108,7 @@ def get_user_competitions(user_id):
         else:
             return competitions
     return ("User not Found")
-
+"""
 
 
 
@@ -125,3 +136,16 @@ def get_user_rankings(user_id):
     ranks = [UserCompetition.query.get(a.id).toDict() for a in userComps]
     return ranks
     
+def display_user_info(username):
+    student = get_student_by_username(username)
+
+    if not student:
+        return None
+    else:
+        score = get_points(student.id)
+        student.set_points(score)
+        profile_info = {
+            "profile": student.get_json(),
+            "participated_competitions": [comp.name for comp in student.competitions]
+        }
+        return profile_info

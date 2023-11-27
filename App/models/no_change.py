@@ -8,8 +8,10 @@ class NoChange(State):
         self.ranking = ranking
 
     def notify(self):
-        return("No Change State")
+        return None
+        #return("No Change State")
 
     def update_state(self):
-        self.ranking.state = self.ranking.change_state
-        return self.ranking.state
+        if self.ranking.curr_ranking != self.ranking.prev_ranking:
+            self.ranking.state = self.ranking.change_state
+            return self.ranking.state
