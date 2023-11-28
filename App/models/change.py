@@ -16,4 +16,4 @@ class Change(State):
     def update_state(self):
         if self.ranking.curr_ranking == self.ranking.prev_ranking:
             self.ranking.state = self.ranking.no_change_state
-            return self.ranking.state
+        return self.ranking.state

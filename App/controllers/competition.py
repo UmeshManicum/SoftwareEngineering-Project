@@ -1,22 +1,19 @@
-from App.models import Competition, Student, Host, competition_student
+from App.models import Competition, Student, Admin, competition_student
 from App.database import db
 
-def create_competition(name, host_id):
+def create_competition(name, staff_id):
     comp = get_competition_by_name(name)
     if comp:
         print(f'{name} already exists!')
         return None
     
-    host = Host.query.filter_by(host_id=host_id).first()
-    if host:
-        newComp = Competition(name=name, host_id=host_id)
-        #newComp = newComp.add_host(host)
+    admin = Admin.query.filter_by(staff_id=staff_id).first()
+    if admin:
+        newComp = Competition(name=name)
         try:
             db.session.add(newComp)
             db.session.commit()
-            #newComp.add_host(host)
             print(f'New Competition: {name} created!')
-            #newComp.add_host(host)
             return newComp
         except Exception as e:
             db.session.rollback()
@@ -43,7 +40,7 @@ def get_all_competitions_json():
         return [comp.get_json() for comp in competitions]
 
 #still needs adjusting (add_results function)
-def add_results(user_id, comp_id, rank):
+"""def add_results(user_id, comp_id, rank):
     Comp = Competition.query.get(comp_id)
     user = User.query.get(user_id)
           
@@ -59,7 +56,7 @@ def add_results(user_id, comp_id, rank):
             db.session.rollback()
             print("error adding to comp")
             return False
-        return False
+        return False"""
 
 def get_competition_students(comp_id):
     comp = get_competition(comp_id)

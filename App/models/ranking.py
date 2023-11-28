@@ -1,8 +1,8 @@
 from App.database import db
 from App.models import state, change, no_change
-#from .state import *
-#from .change import *
-#from .no_change import *
+from .state import *
+from .change import *
+from .no_change import *
 
 class Ranking(db.Model):
     __tablename__='ranking'
@@ -21,6 +21,7 @@ class Ranking(db.Model):
         self.prev_ranking = 0
         self.change_state = Change(self)
         self.no_change_state = NoChange(self)
+        #self.state = State(self)
         self.state = self.no_change_state
 
     def set_points(self, points):
@@ -40,18 +41,19 @@ class Ranking(db.Model):
   
     def update_state(self):
         self.state = self.state.update_state()
+        #return self.state.update_state()
 
     def notify(self):
         return self.state.notify()
   
     def get_json(self):
         return {
-            'total points': self.total_points,
-            'rank' : self.get_ranking()
+            'rank' : self.get_ranking(),
+            'total points': self.total_points
         }
 
     def toDict(self):
         return {
-            'total points': self.total_points,
-            'rank' : self.get_ranking()
+            'rank' : self.get_ranking(),
+            'total points': self.total_points
         }

@@ -38,6 +38,8 @@ student_cli = AppGroup("student", help="Student commands")
 @click.argument("password", default="bobpass")
 def create_student_command(username, password):
     student = create_student(username, password)
+    if student:
+        ranking = create_ranking(student.id)
 
 @student_cli.command("update", help="Updates a student's username")
 @click.argument("id", default="1")
@@ -68,7 +70,21 @@ def display_student_info_command(username):
 
 app.cli.add_command(student_cli) # add the group to the cli
 
+'''
+Admin Commands
+'''
 
+admin_cli = AppGroup("admin", help="Admin commands") 
+
+# Then define the command and any parameters and annotate it with the group (@)
+@admin_cli.command("create", help="Creates an admin")
+@click.argument("username", default="bill")
+@click.argument("password", default="billpass")
+@click.argument("staff_id", default="1")
+def create_admin_command(username, password, staff_id):
+    admin = create_admin(username, password,staff_id)
+
+app.cli.add_command(admin_cli)
 '''
 Competition commands
 '''
@@ -136,6 +152,12 @@ host_cli = AppGroup('host', help = "Host commands")
 def create_host_command(username, password, host_id):
     host = create_host(username, password, host_id)
 
+@host_cli.command("join", help="Adds a host to a competition")
+@click.argument("username", default="rob")
+@click.argument("comp_name", default="RunTime")
+def join_comp_command(username, comp_name):
+    join_comp(username, comp_name)
+
 @host_cli.command("add-results", help="Adds results for a student in a competition")
 @click.argument("host_username", default="rob")
 @click.argument("student_username", default="bob")
@@ -143,6 +165,7 @@ def create_host_command(username, password, host_id):
 @click.argument("score", default="10")
 def add_results_command(host_username, student_username, comp_name, score):
     add_results(host_username, student_username, comp_name, score)
+    update_rankings()
 
 app.cli.add_command(host_cli)
 
@@ -151,8 +174,8 @@ Ranking commands
 '''
 ranking_cli = AppGroup('ranking', help = "Ranking commands")
 
-@host_cli.command("display", help="Displays ranking")
-def display_rankings__command(username, password, host_id):
+@ranking_cli.command("display", help="Displays ranking")
+def display_rankings__command():
     print(display_rankings())
 
 app.cli.add_command(ranking_cli)

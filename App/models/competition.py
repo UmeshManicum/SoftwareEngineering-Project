@@ -1,6 +1,7 @@
 #from datetime import datetime
 from App.database import db
-from App.models import Host
+from App.models import host
+from .competition_host import *
 
 class Competition(db.Model):
     __tablename__='competition'
@@ -10,31 +11,42 @@ class Competition(db.Model):
     #date = db.Column(db.DateTime, default= datetime.utcnow)
     #location = db.Column(db.String(120), nullable=False)
 
-    host_id = db.Column(db.Integer, nullable=False)
+    #host_id = db.Column(db.Integer, nullable=False)
+    hosts = db.relationship('Host', secondary="competition_host", overlaps='competitions', lazy=True)
     participants = db.relationship('Student', secondary="competition_student", overlaps='competitions', lazy=True)
 
-    def __init__(self, name, host_id):
+    def __init__(self, name):
         self.name = name
-        self.host_id = host_id
         #self.location = location
     
-    """def add_host(self, host):
-        competition_host = CompetitionHost(comp_id=self.id, host_id=host.host_id)
+    def add_host(self, host):
+        for h in self.hosts:
+            if h.id == self.id:
+                print("Host already added!")
+                return None
+        
+        comp_host = CompetitionHost(comp_id=self.id, host_id=host.host_id)
         try:
             self.hosts.append(host)
             host.competitions.append(self)
             db.session.commit()
+            print("Host was added!")
+            return comp_host
         except Exception as e:
             db.session.rollback()
-    """
+            print("Something went wrong!")
+            return None
+
+
+
     def get_json(self):
         return {
             'id': self.id,
             'name': self.name,
             #'date': self.date,
             #'location': self.location,
-            #'hosts' : [host.username for host in self.hosts],
-            'host_id': self.host_id,
+            'hosts' : [host.username for host in self.hosts],
+            #'host_id': self.host_id,
             'participants': [student.username for student in self.participants]
         }
 
@@ -44,8 +56,8 @@ class Competition(db.Model):
             "name": self.name,
             #"date": self.date,
             #"location": self.location,
-            #'hosts' : [host.username for host in self.hosts],
-            "host_id": self.host_id,
+            "hosts": [host.username for host in self.hosts],
+            #"host_id": self.host_id,
             "participants": [participant.toDict() for participant in self.participants]
         }
 

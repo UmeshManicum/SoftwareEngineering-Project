@@ -1,5 +1,6 @@
 from App.database import db
 from App.models import User#, competition_student, competition
+from .competition_student import *
 
 class Student(User):
     __tablename__ = 'student'
@@ -12,26 +13,21 @@ class Student(User):
         super().__init__(username, password)
     
     def participate_in_competition(self, competition):
-      registered = False
       for comp in self.competitions:
         if (comp.id == competition.id):
-          registered = True
+          print(f'{self.username} is already registered for {competition.name}!')
 
-      if isinstance(self, Student) and not registered:
-          participation = Participation(student_id=self.id, competition_id=competition.id)
-          try:
-            self.competitions.append(competition)
-            competition.participants.append(self)
-            db.session.commit()
-          except Exception as e:
-            db.session.rollback()
-            return None
-          else:
-            print(f'{self.username} was registered for {competition.name}')
-            return participation
-      else:
-          print(f'{self.username} is already registered for {competition.name}')
-          return None
+      comp_student = CompetitionStudent(student_id=self.id, competition_id=competition.id)
+      try:
+        self.competitions.append(competition)
+        competition.participants.append(self)
+        db.session.commit()
+        print(f'{self.username} was registered for {competition.name}')
+        return comp_student
+      except Exception as e:
+        db.session.rollback()
+        print("Something went wrong!")
+        return None
 
     def get_json(self):
         return {
