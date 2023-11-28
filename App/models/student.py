@@ -29,6 +29,17 @@ class Student(User):
         print("Something went wrong!")
         return None
 
+    def add_notification(self, notification):
+        if notification:
+          try:
+            self.notifications.append(notification)
+            db.session.commit()
+            return notification
+          except Exception as e:
+            db.session.rollback()
+            return None
+        return None
+
     def get_json(self):
         return {
             "id": self.id,

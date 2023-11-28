@@ -68,6 +68,11 @@ def register_student_command(username, comp_name):
 def display_student_info_command(username):
     print(display_student_info(username))
 
+@student_cli.command("notifications", help="Gets all notifications")
+@click.argument("username", default="bob")
+def display_notifications_command(username):
+    print(display_notifications(username))
+
 app.cli.add_command(student_cli) # add the group to the cli
 
 '''
