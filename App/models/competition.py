@@ -21,7 +21,7 @@ class Competition(db.Model):
     
     def add_host(self, host):
         for h in self.hosts:
-            if h.id == self.id:
+            if h.id == host.id:
                 print("Host already added!")
                 return None
         
@@ -30,7 +30,7 @@ class Competition(db.Model):
             self.hosts.append(host)
             host.competitions.append(self)
             db.session.commit()
-            print("Host was added!")
+            print(f'{host.username} was added to {self.name}!')
             return comp_host
         except Exception as e:
             db.session.rollback()
