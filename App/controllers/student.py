@@ -1,4 +1,4 @@
-from App.models import Student, Competition, competition_student
+from App.models import Student, Competition, Ranking, competition_student
 from App.database import db
 
 def create_student(username, password):
@@ -129,23 +129,28 @@ def get_user_competitions(user_id):
 #       send_notification(u, f"Your rank changed from {ranks[u.id]} to {u.rank}")
     
 
-def get_user_rankings(user_id):
+"""def get_user_rankings(user_id):
     users = User.query.get(user_id)
     userComps = users.competitions
 
     ranks = [UserCompetition.query.get(a.id).toDict() for a in userComps]
-    return ranks
+    return ranks"""
     
-def display_user_info(username):
+def display_student_info(username):
     student = get_student_by_username(username)
 
     if not student:
         return None
     else:
-        score = get_points(student.id)
-        student.set_points(score)
-        profile_info = {
-            "profile": student.get_json(),
-            "participated_competitions": [comp.name for comp in student.competitions]
-        }
+        ranking = Ranking.query.filter_by(student_id=student.id).first()
+        if ranking:
+            profile_info = {
+                "profile": student.get_json() + ranking.get_json(),
+                "participated_competitions": [comp.name for comp in student.competitions]
+            }
+        else:
+            profile_info = {
+                "profile": student.get_json(),
+                "participated_competitions": [comp.name for comp in student.competitions]
+            }
         return profile_info

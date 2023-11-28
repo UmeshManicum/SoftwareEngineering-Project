@@ -23,14 +23,14 @@ def initialize():
     print('database intialized')
 
 '''
-User Commands
+Student Commands
 '''
 
 # Commands can be organized using groups
 
 # create a group, it would be the first argument of the comand
 # eg : flask user <command>
-student_cli = AppGroup('student', help='Student object commands') 
+student_cli = AppGroup("student", help="Student commands") 
 
 # Then define the command and any parameters and annotate it with the group (@)
 @student_cli.command("create", help="Creates a student")
@@ -41,7 +41,7 @@ def create_student_command(username, password):
 
 @student_cli.command("update", help="Updates a student's username")
 @click.argument("id", default="1")
-@click.argument("username", default="rob")
+@click.argument("username", default="bobby")
 def update_student_command(id, username):
     student = update_student(id, username)
 
@@ -55,7 +55,107 @@ def list_students_command(format):
     else:
         print(get_all_students_json())
 
+@student_cli.command("register", help="Registers student for a competition")
+@click.argument("username", default="bob")
+@click.argument("comp_name", default="RunTime")
+def register_student_command(username, comp_name):
+    register_student(username, comp_name)
+
+@student_cli.command("display", help="Displays student profile")
+@click.argument("username", default="bob")
+def display_student_info_command(username):
+    print(display_student_info(username))
+
 app.cli.add_command(student_cli) # add the group to the cli
+
+
+'''
+Competition commands
+'''
+
+comp_cli = AppGroup("comp", help = "Competition commands")   
+
+@comp_cli.command("create", help = "Creates a competition")
+@click.argument("name", default = "RunTime")
+@click.argument("host_id", default = "1")
+def create_competition_command(name, host_id):
+    comp = create_competition(name, host_id)
+    """if response:
+        print("Competition Created Successfully")
+    else:
+        print("error adding comp")"""
+
+@comp_cli.command("list", help = "list all competitions")
+def list_competition_command():
+    print(get_all_competitions_json())
+
+"""@comps.command("get_json", help = "list all competitions")
+def get_comps():
+    print(get_all_competitions_json())
+
+
+@comp_cli.command("add_user")
+@click.argument("user_id")
+@click.argument("comp_id")
+@click.argument("rank")
+def add_to_comp(user_id, comp_id, rank):
+    add_user_to_comp(user_id, comp_id, rank)
+    print("Done!")
+
+
+@comps.command("getUserComps")
+@click.argument("user_id")
+def getUserCompetitions(user_id):
+    competitions = get_user_competitions(user_id)
+    print("these are the competitions")
+    # print(competitions)
+
+@comps.command("findcompuser")
+@click.argument("user_id")
+@click.argument("comp_id")
+def find_comp_user(user_id, comp_id):
+    findCompUser(user_id, comp_id)
+
+@comps.command("getCompUsers")
+@click.argument("comp_id")
+def get_comp_users(comp_id):
+    get_competition_users(comp_id)"""
+
+
+app.cli.add_command(comp_cli)
+
+'''
+Host commands
+'''
+host_cli = AppGroup('host', help = "Host commands")
+
+@host_cli.command("create", help="Creates a host")
+@click.argument("username", default="rob")
+@click.argument("password", default="robpass")
+@click.argument("host_id", default="1")
+def create_host_command(username, password, host_id):
+    host = create_host(username, password, host_id)
+
+@host_cli.command("add-results", help="Adds results for a student in a competition")
+@click.argument("host_username", default="rob")
+@click.argument("student_username", default="bob")
+@click.argument("comp_name", default="RunTime")
+@click.argument("score", default="10")
+def add_results_command(host_username, student_username, comp_name, score):
+    add_results(host_username, student_username, comp_name, score)
+
+app.cli.add_command(host_cli)
+
+'''
+Ranking commands
+'''
+ranking_cli = AppGroup('ranking', help = "Ranking commands")
+
+@host_cli.command("display", help="Displays ranking")
+def display_rankings__command(username, password, host_id):
+    print(display_rankings())
+
+app.cli.add_command(ranking_cli)
 
 '''
 Test Commands
@@ -92,64 +192,3 @@ def competition_tests_command(type):
 
 app.cli.add_command(test)
 
-
-'''
-Competition commands
-'''
-
-comps = AppGroup('comp', help = 'commands for competition')   
-
-@comps.command("add", help = 'add new competition')
-@click.argument("name", default = "Coding Comp")
-@click.argument("location", default = "Port of Spain")
-def add_comp(name, location):
-    response = create_competition(name, location)
-    if response:
-        print("Competition Created Successfully")
-    else:
-        print("error adding comp")
-
-
-
-
-
-@comps.command("get", help = "list all competitions")
-def get_comps():
-    print(get_all_competitions())
-
-@comps.command("get_json", help = "list all competitions")
-def get_comps():
-    print(get_all_competitions_json())
-
-
-@comps.command("add_user")
-@click.argument("user_id")
-@click.argument("comp_id")
-@click.argument("rank")
-def add_to_comp(user_id, comp_id, rank):
-    add_user_to_comp(user_id, comp_id, rank)
-    print("Done!")
-
-
-@comps.command("getUserComps")
-@click.argument("user_id")
-def getUserCompetitions(user_id):
-    competitions = get_user_competitions(user_id)
-    print("these are the competitions")
-    # print(competitions)
-
-@comps.command("findcompuser")
-@click.argument("user_id")
-@click.argument("comp_id")
-def find_comp_user(user_id, comp_id):
-    findCompUser(user_id, comp_id)
-
-@comps.command("getCompUsers")
-@click.argument("comp_id")
-def get_comp_users(comp_id):
-    get_competition_users(comp_id)
-
-
-
-
-app.cli.add_command(comps)

@@ -1,21 +1,29 @@
-from App.models import Competition,Student, competition_student
+from App.models import Competition, Student, Host, competition_student
 from App.database import db
 
-def create_competition(name, location):
-    comp = get_comp_by_name(name)
+def create_competition(name, host_id):
+    comp = get_competition_by_name(name)
     if comp:
         print(f'{name} already exists!')
         return None
     
-    newComp = Competition(name=name, location=location)
-    try:
-        db.session.add(newComp)
-        db.session.commit()
-        print(f'New Competition: {name} created!')
-        return newComp
-    except Exception as e:
-        db.session.rollback()
-        return None
+    host = Host.query.filter_by(host_id=host_id).first()
+    if host:
+        newComp = Competition(name=name, host_id=host_id)
+        #newComp = newComp.add_host(host)
+        try:
+            db.session.add(newComp)
+            db.session.commit()
+            #newComp.add_host(host)
+            print(f'New Competition: {name} created!')
+            #newComp.add_host(host)
+            return newComp
+        except Exception as e:
+            db.session.rollback()
+            print("Something went wrong!")
+            return None
+    else:
+        print("Invalid credentials!")
 
 def get_competition_by_name(name):
     return Competition.query.filter_by(name=name).first()
@@ -32,7 +40,7 @@ def get_all_competitions_json():
     if not competitions:
         return []
     else:
-        return [comp.to_json() for comp in competitions]
+        return [comp.get_json() for comp in competitions]
 
 #still needs adjusting (add_results function)
 def add_results(user_id, comp_id, rank):

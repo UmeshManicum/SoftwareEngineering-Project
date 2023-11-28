@@ -54,7 +54,7 @@ def isHost(host_id, comp_id):
     competition = Competition.query.filter_by(id=comp_id).first()
 
     for member in competition.host:
-        if member.id = host_id:
+        if member.id == host_id:
             return True
         else:
             return False
