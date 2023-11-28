@@ -84,11 +84,11 @@ def add_results(host_username, student_username, competition_name, score):
             if participant.username == student.username:
                 participation = CompetitionStudent.query.filter_by(student_id=student.id, comp_id=comp.id).first()
                 ranking = Ranking.query.filter_by(student_id=student.id).first()
+                new_total_score = ranking.total_points + int(score) - participation.points_earned
                 participation.update_points(score)
                 db.session.add(participation)
                 db.session.commit()
-                score = ranking.total_points + int(score)
-                ranking.set_points(score)
+                ranking.set_points(new_total_score)
                 #participation.points_earned = score
                 #score = get_points(student.id)
                 #student.set_points(score)
@@ -108,7 +108,7 @@ def join_comp(username, comp_name):
     host = get_host_by_username(username)
     comp = Competition.query.filter_by(name=comp_name).first()
     if not comp:
-        print(f'{comp.name} does not exist!')
+        print(f'{comp_name} does not exist!')
         return None
     
     if host:

@@ -39,8 +39,8 @@ def update_rankings():
             rank = ranking.state.notify()
             #if rank:
             #    #create a notification
-            db.session.add(rank)
-            db.session.commit()
+            #db.session.add(rank)
+            #db.session.commit()
             count += 1
 
 def display_rankings():

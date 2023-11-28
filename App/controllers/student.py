@@ -145,7 +145,8 @@ def display_student_info(username):
         ranking = Ranking.query.filter_by(student_id=student.id).first()
         if ranking:
             profile_info = {
-                "profile": student.get_json() + ranking.get_json(),
+                "profile": student.get_json(),
+                "ranking": ranking.get_json(),
                 "participated_competitions": [comp.name for comp in student.competitions]
             }
         else:
