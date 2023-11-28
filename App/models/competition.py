@@ -5,8 +5,9 @@ class Competition(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name =  db.Column(db.String, nullable=False, unique=True)
     date = db.Column(db.DateTime, default= datetime.utcnow)
-    # rank = db.Column(db.Integer)
     location = db.Column(db.String(120), nullable=False)
+
+    Competitor_Scores={}
 
     hosts = db.relationship("CompetitionHost", lazy=True, backref=db.backref("hosts"), cascade="all, delete-orphan")
     participants = db.relationship("UserCompetition", lazy=True, backref=db.backref("users"), cascade="all, delete-orphan")
@@ -17,14 +18,21 @@ class Competition(db.Model):
         self.location = location
 
 
+    def assign_Score(self, user, score):
+        self.Competitor_Scores[user.id]=score
+    
+    def get_Score(self, user):
+        return self.Competitor_Scores[user.id]
     
     def get_json(self):
-        return{
+        return {
             'id': self.id,
             'name': self.name,
-            'location': self.location
+            'date': self.date.isoformat(),  # Convert datetime to a string representation
+            'location': self.location,
+            'hosts': [host.get_json() for host in self.hosts],  # Assuming CompetitionHost has a get_json method
+            'participants': [participant.get_json() for participant in self.participants]  # Assuming UserCompetition has a get_json method
         }
-
 
 
     def toDict(self):

@@ -7,6 +7,14 @@ class Host(db.Model):
     
     competitions = db.relationship("CompetitionHost", lazy=True, backref=db.backref("competitions"), cascade="all, delete-orphan")
 
+    def get_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "website": self.website,
+            "competitions": [competition.toDict() for competition in self.competitions]  # Assuming CompetitionHost has a toDict method
+        }
+
     def toDict(self):
         res = {
             "id": self.id,

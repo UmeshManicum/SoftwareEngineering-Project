@@ -6,21 +6,26 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username =  db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String(120), nullable=False)
-    overall_rank = db.relationship("Ranking", uselist=False, backref='user', lazy=True)
-
+    overall_rank = db.Column(db.Integer, default=0, nullable=False)
     competitions = db.relationship("UserCompetition", lazy=True, backref=db.backref("competitions"), cascade="all, delete-orphan")
+    messages = db.relationship("Message", lazy=True, backref=db.backref("user"), cascade="all, delete-orphan")
 
     def __init__(self, username, password):
         self.username = username
         self.set_password(password)
 
+    def get_messages(self):
+        return [message for message in self.messages if not message.is_read]
+    
     def get_json(self):
         return{
             'id': self.id,
-            'username': self.username
-            # 'competitions': self.competitions
+            'username': self.username,
+            'overall_rank': self.overall_rank,
+            'competitions': self.competitions,
+            'UnreadMessages' :len([message for message in self.messages])
         }
-        
+    
     def toDict(self):
         return{
             'id': self.id,

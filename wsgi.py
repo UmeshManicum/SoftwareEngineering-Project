@@ -1,12 +1,14 @@
 import click, pytest, sys
-from flask import Flask
+from flask import Flask, current_app
 from datetime import datetime
 
 from flask.cli import with_appcontext, AppGroup
 
 from App.database import db, get_migrate
 from App.main import create_app
-from App.controllers import (add_results, get_user_rankings, get_competition_users, findCompUser, get_user_competitions, add_user_to_comp, create_competition, get_all_competitions, get_all_competitions_json, create_user, get_all_users_json, get_all_users )
+from App.controllers import *
+
+#add_results, get_user_rankings, get_competition_users, findCompUser, get_user_competitions, add_user_to_comp, create_competition, get_all_competitions, get_all_competitions_json, create_user, get_all_users_json, get_all_users )
 
 
 
@@ -47,7 +49,7 @@ def create_user_command(username, password):
 @click.argument("format", default="string")
 def list_user_command(format):
     if format == 'string':
-        print(get_all_users())
+        print(get_all_users_json())
     else:
         print(get_all_users_json())
 
@@ -106,7 +108,27 @@ def add_comp(name, location):
         print("error adding comp")
 
 
+@comps.command("list", help="Lists students in the database")
+@click.argument("format", default="string")
+def list_student_command(format):
+    if format == 'string':
+        print(get_all_competitions())
+    else:
+        print(get_all_competitions_json()) 
 
+
+@comps.command("compete", help='add user to competition')
+@click.argument("user_id", default=1, type=int)
+@click.argument("comp_id", default=1, type=int)
+@click.argument("score", default=10, type=int)
+def add_user_to_comp_command(user_id, comp_id, score):
+    response = add_user_to_comp(user_id, comp_id, score)
+    if response:
+        competition = Competition.query.get(comp_id)
+        app.ranking_table.update_ranking()  
+        print("User added to competition successfully")
+    else:
+        print("Error adding user to competition")
 
 
 @comps.command("get", help = "list all competitions")

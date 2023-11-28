@@ -1,5 +1,6 @@
-from App.models import User, Competition, UserCompetition
+from App.models import RankingTable, User, Competition, UserCompetition, UserObserver
 from App.database import db
+from flask import current_app
 
 def create_user(username, password):
     newuser = User(username=username, password=password)
@@ -43,30 +44,34 @@ def get_ranked_users():
 
 
 
-def add_user_to_comp(user_id, comp_id, rank):
-
+def add_user_to_comp(user_id, comp_id, score):
     user = User.query.get(user_id)
     comp = Competition.query.get(comp_id)
 
-    user_comp = UserCompetition.query.filter_by(user_id=user.id, comp_id=comp.id).first()
+    user_comp = UserCompetition.query.filter_by(user_id=user_id, comp_id=comp_id).first()
+
     if user_comp:
         return False
-        
+
     if user and comp:
-        user_comp = UserCompetition(user_id=user.id, comp_id=comp.id, rank = rank)
+        user_comp = UserCompetition(user_id=user_id, comp_id=comp_id, score=score)
         try:
             db.session.add(user_comp)
             db.session.commit()
+
+            user_observer = UserObserver(user)
+            current_app.ranking_table.add_observer(user_observer)  
+
+            current_app.ranking_table.update_ranking()  
             return True
         except Exception as e:
-            print("FAILURE")
+            print(f"Error adding user to competition: {str(e)}")
             db.session.rollback()
             return False
-            
-        print("success")
-        
 
-    return 'Error adding user to competition'
+    return False
+
+
 
 
 def get_user_competitions(user_id):
