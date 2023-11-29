@@ -3,9 +3,8 @@ from App.models import state, change, no_change
 from .state import *
 from .change import *
 from .no_change import *
-from sqlalchemy.ext.mutable import Mutable
 
-class Ranking(db.Model, Mutable):
+class Ranking(db.Model):
     __tablename__='ranking'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -13,7 +12,7 @@ class Ranking(db.Model, Mutable):
     total_points = db.Column(db.Integer, default=0)
     curr_ranking = db.Column(db.Integer, nullable=False, default=0)
     prev_ranking = db.Column(db.Integer, nullable=False, default=0)
-    state = db.Column(db.PickleType())
+    state = db.Column(db.PickleType)
   
     def __init__(self, student_id):
         self.student_id = student_id
@@ -22,7 +21,6 @@ class Ranking(db.Model, Mutable):
         self.prev_ranking = 0
         self.change_state = Change()
         self.no_change_state = NoChange()
-        #self.state = State(self)
         self.state = self.no_change_state
 
     def set_points(self, points):
@@ -47,7 +45,6 @@ class Ranking(db.Model, Mutable):
             self.state = self.change_state
         else:
             self.state = self.no_change_state
-        #return self.state.update_state()
 
     def notify(self):
         notification = self.state.notify(self.student_id, self.curr_ranking, self.prev_ranking)

@@ -26,7 +26,7 @@ def initialize():
     RunTime = create_competition('RunTime', 1)
     participant = register_student('bob', 'RunTime')
     host = join_comp('rob', 'RunTime')
-    #db.session.add_all()
+    
     print('database intialized')
 
 '''

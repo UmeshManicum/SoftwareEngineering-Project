@@ -4,9 +4,6 @@ from .notification import *
 
 class Change(State):
     __tablename__='change'
-
-    #def __init__(self, ranking):
-    #    self.ranking = ranking
   
     def notify(self, student_id, curr_ranking, prev_ranking):
         if prev_ranking == 0:
@@ -15,4 +12,3 @@ class Change(State):
             message = f'Ranking changed from {prev_ranking} to {curr_ranking}'
         notification = Notification(student_id, message)
         return notification
-        #return("Change State")

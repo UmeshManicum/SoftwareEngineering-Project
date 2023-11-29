@@ -2,15 +2,18 @@ from App.models import Student, Ranking, Notification, competition_student
 from App.database import db
 
 def create_ranking(student_id):
+    student = Student.query.filter_by(id=student_id).first()
+
+    if not Student:
+        return None
+    
     newRanking = Ranking(student_id)
     try:
         db.session.add(newRanking)
         db.session.commit()
-        #print(f'New Student: {username} created!')
         return newRanking
     except Exception as e:
         db.session.rollback()
-        #print(f'Something went wrong creating {username}')
         return None
 
 def get_ranking(id):
@@ -31,29 +34,16 @@ def update_rankings():
             if curr_high != ranking.total_points:
                 curr_rank = count
                 curr_high = ranking.total_points
-            #print(ranking.get_json())
             ranking.set_ranking(curr_rank)
-            #if ranking.curr_ranking != ranking.prev_ranking:
             ranking.update_state()
             db.session.add(ranking)
             db.session.commit()
-            #ranking.state.notify()
-            #if rank:
-            #    #create a notification
-            #db.session.add(rank)
-            #db.session.commit()
             notification = ranking.notify()
-            #message = f'Your ranking changed to {ranking.curr_ranking}'
-            #notification = Notification(ranking.student_id, message)
             if notification:
                 student = Student.query.filter_by(id=ranking.student_id).first()
                 student.add_notification(notification)
                 db.session.add(student)
                 db.session.commit()
-                #ranking.set_previous_ranking(ranking.curr_ranking)
-                #ranking.update_state()
-                #db.session.add(ranking)
-                #db.session.commit()
             count += 1
 
 def display_rankings():
@@ -74,6 +64,5 @@ def display_rankings():
 
             student = Student.query.filter_by(id=ranking.student_id).first()
             leaderboard.append({"student": student.username, "ranking":ranking.get_json()})
-            #leaderboard.append({"rank": ranking.curr_ranking, "student": student.username, "points": ranking.total_points})
             count += 1
         return leaderboard
