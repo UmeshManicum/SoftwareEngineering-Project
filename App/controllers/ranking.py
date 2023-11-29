@@ -33,7 +33,8 @@ def update_rankings():
                 curr_high = ranking.total_points
             #print(ranking.get_json())
             ranking.set_ranking(curr_rank)
-            ranking.update_state()
+            if ranking.curr_ranking != ranking.prev_ranking:
+                ranking.update_state()
             db.session.add(ranking)
             db.session.commit()
             #ranking.state.notify()

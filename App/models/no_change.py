@@ -12,6 +12,6 @@ class NoChange(State):
         #return("No Change State")
 
     def update_state(self):
-        if self.ranking.curr_ranking != self.ranking.prev_ranking:
-            self.ranking.state = self.ranking.change_state
+        #if self.ranking.curr_ranking != self.ranking.prev_ranking:
+        self.ranking.state = self.ranking.change_state
         return self.ranking.state
