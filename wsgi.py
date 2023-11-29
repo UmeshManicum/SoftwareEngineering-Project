@@ -19,7 +19,14 @@ migrate = get_migrate(app)
 def initialize():
     db.drop_all()
     db.create_all()
-    #create_student('bob', 'bobpass')
+    bob = create_student('bob', 'bobpass')
+    ranking = create_ranking(bob.id)
+    rob = create_host('rob', 'robpass', 1)
+    bill = create_admin('bill', 'billpass', 1)
+    RunTime = create_competition('RunTime', 1)
+    participant = register_student('bob', 'RunTime')
+    host = join_comp('rob', 'RunTime')
+    #db.session.add_all()
     print('database intialized')
 
 '''
@@ -98,9 +105,9 @@ comp_cli = AppGroup("comp", help = "Competition commands")
 
 @comp_cli.command("create", help = "Creates a competition")
 @click.argument("name", default = "RunTime")
-@click.argument("host_id", default = "1")
-def create_competition_command(name, host_id):
-    comp = create_competition(name, host_id)
+@click.argument("staff_id", default = "1")
+def create_competition_command(name, staff_id):
+    comp = create_competition(name, staff_id)
     """if response:
         print("Competition Created Successfully")
     else:
