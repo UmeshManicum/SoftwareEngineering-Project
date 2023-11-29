@@ -33,8 +33,8 @@ def update_rankings():
                 curr_high = ranking.total_points
             #print(ranking.get_json())
             ranking.set_ranking(curr_rank)
-            if ranking.curr_ranking != ranking.prev_ranking:
-                ranking.update_state()
+            #if ranking.curr_ranking != ranking.prev_ranking:
+            ranking.update_state()
             db.session.add(ranking)
             db.session.commit()
             #ranking.state.notify()
@@ -42,18 +42,18 @@ def update_rankings():
             #    #create a notification
             #db.session.add(rank)
             #db.session.commit()
-            if ranking.state.notify():
-                message = f'Your ranking changed to {ranking.curr_ranking}'
-                notification = Notification(ranking.student_id, message)
-                if notification:
-                    student = Student.query.filter_by(id=ranking.student_id).first()
-                    student.add_notification(notification)
-                    db.session.add(student)
-                    db.session.commit()
-                    ranking.set_previous_ranking(ranking.curr_ranking)
-                    ranking.update_state()
-                    db.session.add(ranking)
-                    db.session.commit()
+            notification = ranking.notify()
+            #message = f'Your ranking changed to {ranking.curr_ranking}'
+            #notification = Notification(ranking.student_id, message)
+            if notification:
+                student = Student.query.filter_by(id=ranking.student_id).first()
+                student.add_notification(notification)
+                db.session.add(student)
+                db.session.commit()
+                #ranking.set_previous_ranking(ranking.curr_ranking)
+                #ranking.update_state()
+                #db.session.add(ranking)
+                #db.session.commit()
             count += 1
 
 def display_rankings():
