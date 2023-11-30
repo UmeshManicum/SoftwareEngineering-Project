@@ -6,4 +6,4 @@ from .competition_host import *
 from .user_competition import *
 from . RankingTable import *
 from .observer import *
-from .Inbox import *
+from .message import *
