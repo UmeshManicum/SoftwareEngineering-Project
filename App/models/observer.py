@@ -1,10 +1,7 @@
 from App.database import db
 from App.models import message, User
 
-class UserObserver(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.PickleType)
-    
+class UserObserver():
     def __init__(self, user):
         self.user = user
 
