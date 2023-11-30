@@ -37,12 +37,18 @@ class Ranking(db.Model):
   
     def set_previous_ranking(self, ranking):
         self.prev_ranking = ranking
-  
+
     def update_state(self):
         self.change_state = Change()
         self.no_change_state = NoChange()
         if self.curr_ranking != self.prev_ranking:
-            self.state = self.change_state
+            if self.curr_ranking <= 20 or self.prev_ranking <= 20:
+                self.state = self.change_state
+            else:
+                self.prev_ranking = self.curr_ranking
+                self.update_state()
+                db.session.add(self)
+                db.session.commit()
         else:
             self.state = self.no_change_state
 
