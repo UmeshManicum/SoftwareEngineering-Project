@@ -42,7 +42,7 @@ class Ranking(db.Model):
         self.change_state = Change()
         self.no_change_state = NoChange()
         if self.curr_ranking != self.prev_ranking:
-            if self.curr_ranking <= 20 or self.prev_ranking <= 20:
+            if self.curr_ranking <= 20 or (self.prev_ranking <= 20 and self.prev_ranking != 0):
                 self.state = self.change_state
             else:
                 self.prev_ranking = self.curr_ranking
