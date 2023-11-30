@@ -1,4 +1,4 @@
-from App.database import db
+"""from App.database import db
 
 class StudentCompetition(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -13,4 +13,4 @@ class StudentCompetition(db.Model):
             "student_id": self.user_id,
             "rank": self.rank
         } 
-        return res
+        return res"""
