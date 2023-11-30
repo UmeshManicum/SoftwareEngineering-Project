@@ -14,6 +14,7 @@ from App.controllers import (
     setup_jwt,
     setup_flask_login
 )
+from App.models import RankingTable
 
 from App.views import views
 
@@ -40,6 +41,7 @@ def create_app(config_overrides={}):
     photos = UploadSet('photos', TEXT + DOCUMENTS + IMAGES)
     configure_uploads(app, photos)
     add_views(app)
+    app.ranking_table = RankingTable()
     init_db(app)
     setup_jwt(app)
     setup_flask_login(app)
