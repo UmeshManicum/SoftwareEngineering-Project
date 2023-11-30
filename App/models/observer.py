@@ -1,9 +1,9 @@
 from App.database import db
-from App.models import Message, User
+from App.models import message, User
 
-class UserObserver(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.PickleType)
+class UserObserver():
+    #id = db.Column(db.Integer, primary_key=True)
+    #user = db.Column(db.PickleType)
     
     def __init__(self, user):
         self.user = user
@@ -23,7 +23,7 @@ class UserObserver(db.Model):
             if prev_rank is not None:
                 if new_rank < prev_rank and new_rank <= 20:
                     message_content = f"You have risen to rank {new_rank} in the overall ranking!"
-                else new_rank > prev_rank and prev_rank <= 20:
+                elif new_rank > prev_rank and prev_rank <= 20:
                     message_content = f"You have fallen to rank {new_rank} in the overall ranking!"
             else:
                 if new_rank <= 20:

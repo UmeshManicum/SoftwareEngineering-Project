@@ -8,15 +8,28 @@ class RankingTable:
         self.observers = set()
 
     def add_observer(self, observer):
-        self.observers.add(observer)
+        if observer[user_id] not in self.observers:
+            self.observers.add(observer)
 
     def remove_observer(self, observer):
+        for observer in self.observers:
+            observer.update_user()
         self.observers.remove(observer)
 
     def notify_observers(self, user_id, new_rank):
         for observer in self.observers:
             observer.notify_rank_change(user_id, new_rank)
 
+    def update_users(self):
+        for curr_user in self.users:
+            user = User.query.filter_by(id=curr_user.id).first()
+            self.curr_user = user
+
+    def update_observers(self):
+        for observer in self.observers:
+            observer.update_user()
+
+    """
     def update_ranking(self):
         all_participants = UserCompetition.query.all()
 
@@ -44,11 +57,13 @@ class RankingTable:
 
     def get_user_ranking(self, user_id):
         return self.users.get(user_id, {'rank': None, 'total_score': None})
-
-
-'''
+    """
+    
     def update_ranking(self):
         # Collect data for all competitions
+        self.update_users()
+        self.update_observers()
+        
         ranking_data = []
         for competition in Competition.query.all():
             for participant in competition.participants:
@@ -79,5 +94,6 @@ class RankingTable:
                     self.notify_observers(user_id, rank)
             else:
                 self.users[user_id] = {'rank': rank, 'total_score': total_score}
-'''
+        
+        
     

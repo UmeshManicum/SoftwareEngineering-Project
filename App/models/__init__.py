@@ -4,6 +4,6 @@ from .host import *
 from .competition import *
 from .competition_host import *
 from .user_competition import *
-from . RankingTable import *
+from .rankingtable import *
 from .observer import *
-from .Inbox import *
+from .message import *
